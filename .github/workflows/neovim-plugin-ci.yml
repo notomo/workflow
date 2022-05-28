@@ -31,6 +31,11 @@ jobs:
       - run: luarocks config
       - run: python --version
 
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+        if: ${{ runner.os == 'macOS' }}
+
       - id: luarocks
         run: |
           import platform
@@ -38,17 +43,21 @@ jobs:
 
           enabled_shell = platform.system() == "Windows"
 
-          home_tree_result = subprocess.run(
-              ["luarocks", "config", "home_tree"], stdout=subprocess.PIPE, shell=enabled_shell
+          rocks_tree1_result = subprocess.run(
+              ["luarocks", "config", "rocks_trees[1].root"],
+              stdout=subprocess.PIPE,
+              shell=enabled_shell,
           )
-          home_tree = home_tree_result.stdout.decode("utf-8")
-          print(f"::set-output name=home_tree::{home_tree}")
+          rocks_tree1 = rocks_tree1_result.stdout.decode("utf-8")
+          print(f"::set-output name=rocks_tree1::{rocks_tree1}")
 
-          rocks_dir_result = subprocess.run(
-              ["luarocks", "config", "rocks_dir"], stdout=subprocess.PIPE, shell=enabled_shell
+          rocks_tree2_result = subprocess.run(
+              ["luarocks", "config", "rocks_trees[2].root"],
+              stdout=subprocess.PIPE,
+              shell=enabled_shell,
           )
-          rocks_dir = rocks_dir_result.stdout.decode("utf-8")
-          print(f"::set-output name=rocks_dir::{rocks_dir}")
+          rocks_tree2 = rocks_tree2_result.stdout.decode("utf-8")
+          print(f"::set-output name=rocks_tree2::{rocks_tree2}")
 
           major_version_result = subprocess.run(
               ["luarocks", "config", "major_version"],
@@ -62,9 +71,9 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: |
-            ${{ steps.luarocks.outputs.rocks_dir }}
-            ${{ steps.luarocks.outputs.home_tree }}
-          key: ${{ runner.os }}-luarocks-dirs-${{ steps.luarocks.outputs.major_version }}
+            ${{ steps.luarocks.outputs.rock_tree1 }}
+            ${{ steps.luarocks.outputs.rock_tree2 }}
+          key: ${{ runner.os }}-luarocks-rocks-trees-${{ steps.luarocks.outputs.major_version }}
 
       - run: luarocks install vusted
 
