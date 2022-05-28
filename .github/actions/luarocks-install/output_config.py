@@ -3,6 +3,7 @@ import platform
 import re
 import subprocess
 import sys
+from typing import List
 
 enabled_shell = platform.system() == "Windows"
 
@@ -16,7 +17,7 @@ def luarocks(args: list, stdout=None) -> subprocess.CompletedProcess[bytes]:
     return result
 
 
-def luarocks_pipe(args: list) -> str:
+def luarocks_pipe(args: List[str]) -> str:
     result = luarocks(args, stdout=subprocess.PIPE)
     return result.stdout.decode("utf-8")
 
