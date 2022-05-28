@@ -27,6 +27,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: notomo/action-setup-nvim-lua@v1
+
+      - id: luarocks
+        run: |
+          version=$(luarocks config program_version)
+          local_cache=$(luarocks config local_cache)
+          echo "::set-output name=version::$(echo ${version})"
+          echo "::set-output name=local_cache::$(echo ${local_cache})"
+        shell: bash
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.luarocks.outputs.local_cache }}
+          key: ${{ runner.os }}-luarocks-${{ steps.luarocks.outputs.version }}
+
       - run: luarocks install vusted
 
       - uses: rhysd/action-setup-vim@v1
