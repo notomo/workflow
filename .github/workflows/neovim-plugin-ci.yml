@@ -32,24 +32,36 @@ jobs:
         run: |
           import platform
           import subprocess
+
           enabled_shell = platform.system() == "Windows"
+
+          home_tree_result = subprocess.run(
+              ["luarocks", "config", "home_tree"], stdout=subprocess.PIPE, shell=enabled_shell
+          )
+          home_tree = home_tree_result.stdout.decode("utf-8")
+          print(f"::set-output name=home_tree::{home_tree}")
+
           rocks_dir_result = subprocess.run(
               ["luarocks", "config", "rocks_dir"], stdout=subprocess.PIPE, shell=enabled_shell
           )
           rocks_dir = rocks_dir_result.stdout.decode("utf-8")
           print(f"::set-output name=rocks_dir::{rocks_dir}")
 
-          program_version_result = subprocess.run(
-              ["luarocks", "config", "program_version"], stdout=subprocess.PIPE, shell=enabled_shell
+          major_version_result = subprocess.run(
+              ["luarocks", "config", "major_version"],
+              stdout=subprocess.PIPE,
+              shell=enabled_shell,
           )
-          program_version = program_version_result.stdout.decode("utf-8")
-          print(f"::set-output name=program_version::{program_version}")
+          major_version = major_version_result.stdout.decode("utf-8")
+          print(f"::set-output name=major_version::{major_version}")
         shell: python
 
       - uses: actions/cache@v3
         with:
-          path: ${{ steps.luarocks.outputs.rocks_dir }}
-          key: ${{ runner.os }}-luarocks-dir-${{ steps.luarocks.outputs.version }}
+          path: |
+            ${{ steps.luarocks.outputs.rocks_dir }}
+            ${{ steps.luarocks.outputs.home_tree }}
+          key: ${{ runner.os }}-luarocks-dirs-${{ steps.luarocks.outputs.major_version }}
 
       - run: luarocks install vusted
 
