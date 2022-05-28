@@ -30,16 +30,24 @@ jobs:
 
       - id: luarocks
         run: |
-          version=$(luarocks config program_version)
-          local_cache=$(luarocks config local_cache)
-          echo "::set-output name=version::$(echo ${version})"
-          echo "::set-output name=local_cache::$(echo ${local_cache})"
-        shell: bash
+          import subprocess
+          home_tree_result = subprocess.run(
+              ["luarocks", "config", "home_tree"], stdout=subprocess.PIPE, shell=True
+          )
+          home_tree = home_tree_result.stdout.decode("utf-8")
+          print(f"::set-output name=home_tree::{home_tree}")
+
+          program_version_result = subprocess.run(
+              ["luarocks", "config", "program_version"], stdout=subprocess.PIPE, shell=True
+          )
+          program_version = program_version_result.stdout.decode("utf-8")
+          print(f"::set-output name=program_version::{program_version}")
+        shell: python
 
       - uses: actions/cache@v3
         with:
-          path: ${{ steps.luarocks.outputs.local_cache }}
-          key: ${{ runner.os }}-luarocks-${{ steps.luarocks.outputs.version }}
+          path: ${{ steps.luarocks.outputs.home_tree }}
+          key: ${{ runner.os }}-luarocks-tree-${{ steps.luarocks.outputs.version }}
 
       - run: luarocks install vusted
 
