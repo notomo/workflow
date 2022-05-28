@@ -12,6 +12,7 @@ on:
     paths:
       - Makefile
       - .github/workflows/neovim-plugin-ci.yml
+      - .github/actions/luarocks-install/**
 
 permissions:
   contents: read
@@ -27,7 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: notomo/action-setup-nvim-lua@v1
-      - run: luarocks install vusted
+
+      - uses: ./.github/actions/luarocks-install
+        with:
+          packages: vusted
 
       - uses: rhysd/action-setup-vim@v1
         id: vim
