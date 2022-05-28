@@ -8,13 +8,12 @@ from typing import List
 enabled_shell = platform.system() == "Windows"
 
 
-def luarocks(args: list, stdout=None) -> subprocess.CompletedProcess[bytes]:
-    result = subprocess.run(
+def luarocks(args: list, stdout=None) -> subprocess.CompletedProcess:
+    return subprocess.run(
         ["luarocks"] + args,
         stdout=stdout,
         shell=enabled_shell,
     )
-    return result
 
 
 def luarocks_pipe(args: List[str]) -> str:
