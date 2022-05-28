@@ -49,6 +49,7 @@ jobs:
               shell=enabled_shell,
           )
           rocks_tree1 = rocks_tree1_result.stdout.decode("utf-8")
+          print(rocks_tree1)
           print(f"::set-output name=rocks_tree1::{rocks_tree1}")
 
           rocks_tree2_result = subprocess.run(
@@ -57,6 +58,7 @@ jobs:
               shell=enabled_shell,
           )
           rocks_tree2 = rocks_tree2_result.stdout.decode("utf-8")
+          print(rocks_tree2)
           print(f"::set-output name=rocks_tree2::{rocks_tree2}")
 
           program_version_result = subprocess.run(
@@ -65,14 +67,15 @@ jobs:
               shell=enabled_shell,
           )
           program_version = program_version_result.stdout.decode("utf-8")
+          print(program_version)
           print(f"::set-output name=program_version::{program_version}")
         shell: python
 
       - uses: actions/cache@v3
         with:
           path: |
-            ${{ steps.luarocks.outputs.rock_tree1 }}
-            ${{ steps.luarocks.outputs.rock_tree2 }}
+            ${{ steps.luarocks.outputs.rocks_tree1 }}
+            ${{ steps.luarocks.outputs.rocks_tree2 }}
           key: ${{ runner.os }}-luarocks-rocks-trees-${{ steps.luarocks.outputs.program_version }}
 
       - run: luarocks install vusted
