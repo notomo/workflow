@@ -12,6 +12,7 @@ on:
     paths:
       - Makefile
       - .github/workflows/neovim-plugin-ci.yml
+      - .github/actions/luarocks-install/**
 
 permissions:
   contents: read
@@ -28,57 +29,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: notomo/action-setup-nvim-lua@v1
 
-      # TODO: move to install-luarocks-package action
-
-      - uses: actions/setup-python@v3
+      - uses: ./.github/actions/luarocks-install
         with:
-          python-version: '3.10'
-        if: ${{ runner.os == 'macOS' }}
-
-      - name: Output luarocks config
-        id: luarocks
-        run: |
-          import platform
-          import subprocess
-
-          enabled_shell = platform.system() == "Windows"
-
-          rocks_tree1_result = subprocess.run(
-              ["luarocks", "config", "rocks_trees[1].root"],
-              stdout=subprocess.PIPE,
-              shell=enabled_shell,
-          )
-          rocks_tree1 = rocks_tree1_result.stdout.decode("utf-8")
-          print(f"{rocks_tree1=}")
-          print(f"::set-output name=rocks_tree1::{rocks_tree1}")
-
-          rocks_tree2_result = subprocess.run(
-              ["luarocks", "config", "rocks_trees[2].root"],
-              stdout=subprocess.PIPE,
-              shell=enabled_shell,
-          )
-          rocks_tree2 = rocks_tree2_result.stdout.decode("utf-8")
-          print(f"{rocks_tree2=}")
-          print(f"::set-output name=rocks_tree2::{rocks_tree2}")
-
-          program_version_result = subprocess.run(
-              ["luarocks", "config", "program_version"],
-              stdout=subprocess.PIPE,
-              shell=enabled_shell,
-          )
-          program_version = program_version_result.stdout.decode("utf-8")
-          print(f"{program_version=}")
-          print(f"::set-output name=program_version::{program_version}")
-        shell: python
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ${{ steps.luarocks.outputs.rocks_tree1 }}
-            ${{ steps.luarocks.outputs.rocks_tree2 }}
-          key: ${{ runner.os }}-luarocks-rocks-trees-${{ steps.luarocks.outputs.program_version }}
-
-      - run: luarocks install vusted
+          packages: vusted
 
       - uses: rhysd/action-setup-vim@v1
         id: vim
