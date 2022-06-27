@@ -33,7 +33,7 @@ jobs:
         with:
           packages: vusted
 
-      - uses: rhysd/action-setup-vim@v1
+      - uses: notomo/action-setup-vim@update-macos-asset-dir-test
         id: vim
         with:
           neovim: true
