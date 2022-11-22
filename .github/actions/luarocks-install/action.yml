@@ -17,7 +17,7 @@ runs:
       if: ${{ runner.os == 'macOS' }}
 
     - id: luarocks
-      run: python ${TARGET_SCRIPT} ${PACKAGES}
+      run: python ${TARGET_SCRIPT} ${PACKAGES} >> $GITHUB_OUTPUT
       shell: bash
       env:
         TARGET_SCRIPT: ${{ github.action_path }}/output_config.py

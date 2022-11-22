@@ -27,7 +27,7 @@ def validate_package_name(package_name: str):
 
 
 def output(name: str, value: str) -> None:
-    print(f"::set-output name={name}::{value}")
+    print(f"{name}={value}")
 
 
 def search_latest_version(package_name: str) -> str:
@@ -59,7 +59,6 @@ def main():
 
     versions_hash = hashlib.sha256()
     versions = "\n".join(latest_versions)
-    print(versions)
     versions_hash.update(bytes(versions, "utf-8"))
     output("versions_hash", versions_hash.hexdigest())
 
