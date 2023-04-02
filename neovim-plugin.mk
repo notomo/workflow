@@ -1,7 +1,7 @@
 # usage: include {this_file}
 
+FULL_PLUGIN_NAME ?= $(notdir $(abspath .))
 PLUGIN_NAME ?= $(basename $(notdir $(abspath .)))
-FULL_PLUGIN_NAME ?= ${PLUGIN_NAME}.nvim
 SPEC_DIR ?= ./spec/lua/${PLUGIN_NAME}
 
 test: FORCE deps
