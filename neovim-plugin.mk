@@ -20,7 +20,11 @@ sync_config:
 	cp ${MAKEFILE_DIR_PATH}/stylua.toml ${MAKEFILE_DIR_PATH}/../../stylua.toml
 
 # target to overwrite
-deps:
+deps: assertlib.nvim
+
+assertlib.nvim: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/assertlib.nvim
+$(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/assertlib.nvim:
+	git clone https://github.com/notomo/assertlib.nvim.git --depth 1 $@
 
 FORCE:
 .PHONY: FORCE
