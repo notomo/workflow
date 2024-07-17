@@ -21,7 +21,7 @@ sync_config:
 	cp ${MAKEFILE_DIR_PATH}/stylua.toml ${MAKEFILE_DIR_PATH}/../../stylua.toml
 
 requireall: FORCE deps
-	nvim --headless -i NONE -n +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
+	REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless -i NONE -n +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
 
 # target to overwrite
 deps: assertlib.nvim requireall.nvim
