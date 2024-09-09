@@ -28,11 +28,11 @@ deps: assertlib.nvim requireall.nvim
 
 assertlib.nvim: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/assertlib.nvim
 $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/assertlib.nvim:
-	git clone https://github.com/notomo/assertlib.nvim.git --depth 1 $@
+	if [ "${DEPS_SKIP_ASSERTLIB}" != "1" ]; then git clone https://github.com/notomo/assertlib.nvim.git --depth 1 $@; fi
 
 requireall.nvim: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/requireall.nvim
 $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/requireall.nvim:
-	git clone https://github.com/notomo/requireall.nvim.git --depth 1 $@
+	if [ "${DEPS_SKIP_REQUIREALL}" != "1" ]; then git clone https://github.com/notomo/requireall.nvim.git --depth 1 $@; fi
 
 FORCE:
 .PHONY: FORCE
