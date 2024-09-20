@@ -34,5 +34,9 @@ requireall.nvim: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/requireall.nv
 $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/requireall.nvim:
 	if [ "${DEPS_SKIP_REQUIREALL}" != "1" ]; then git clone https://github.com/notomo/requireall.nvim.git --depth 1 $@; fi
 
+nvim-treesitter: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/opt/nvim-treesitter
+$(MAKEFILE_DIR_PATH)/packages/pack/testpack/opt/nvim-treesitter:
+	git clone https://github.com/nvim-treesitter/nvim-treesitter.git --depth 1 $@;
+
 FORCE:
 .PHONY: FORCE
