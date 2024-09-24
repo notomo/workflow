@@ -27,7 +27,7 @@ jobs:
         os: ${{ fromJson(inputs.test_os || '["ubuntu-latest", "macos-latest", "windows-latest"]') }}
     steps:
       - uses: actions/checkout@v4
-      - uses: notomo/action-setup-nvim-lua@v1
+      - uses: notomo/action-setup-nvim-lua@v2
 
       - uses: notomo/workflow/.github/actions/luarocks-install@main
         with:
