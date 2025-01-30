@@ -23,6 +23,10 @@ sync_config:
 requireall: FORCE deps
 	REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
 
+check: FORCE
+	lua-language-server --check_out_path=/tmp/luals-${PLUGIN_NAME}.json --configpath=${MAKEFILE_DIR_PATH}.luarc.json --check=lua
+	cat /tmp/luals-${PLUGIN_NAME}.json
+
 # target to overwrite
 deps: assertlib.nvim requireall.nvim
 
