@@ -23,9 +23,11 @@ sync_config:
 requireall: FORCE deps
 	REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
 
+CHECK_RESULT:=/tmp/luals-${PLUGIN_NAME}.json
 check: FORCE
-	lua-language-server --check_out_path=/tmp/luals-${PLUGIN_NAME}.json --configpath=${MAKEFILE_DIR_PATH}.luarc.json --check=lua
-	cat /tmp/luals-${PLUGIN_NAME}.json
+	lua-language-server --check_out_path=${CHECK_RESULT} --configpath=${MAKEFILE_DIR_PATH}.luarc.json --check=lua
+	cat ${CHECK_RESULT}
+	if [ "$(shell cat ${CHECK_RESULT} | head -c 2)" = "[]" ]; then rm ${CHECK_RESULT}; fi
 
 # target to overwrite
 deps: assertlib.nvim requireall.nvim
