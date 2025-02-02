@@ -31,6 +31,10 @@
       "type-check": "Any",
       "unbalanced": "Any",
       "unused": "Any"
-    }
+    },
+    "disable": [
+      "incomplete-signature-doc",
+      "different-requires"
+    ]
   }
 }
