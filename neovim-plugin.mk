@@ -23,8 +23,10 @@ sync_config:
 requireall: FORCE deps
 	REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
 
-CHECK_RESULT:=/tmp/luals-${PLUGIN_NAME}.json
+CHECK_RESULT_DIR:=/tmp/luals-check
+CHECK_RESULT:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}.json
 check: FORCE
+	mkdir -p ${CHECK_RESULT_DIR}
 	lua-language-server --check_out_path=${CHECK_RESULT} --configpath=${MAKEFILE_DIR_PATH}.luarc.json --check=lua
 	cat ${CHECK_RESULT}
 	if [ "$(shell cat ${CHECK_RESULT} | head -c 2)" = "[]" ]; then rm ${CHECK_RESULT}; fi
