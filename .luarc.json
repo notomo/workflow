@@ -14,9 +14,6 @@
     "checkThirdParty": false
   },
   "diagnostics": {
-    "globals": [
-      "vim"
-    ],
     "groupFileStatus": {
       "await": "Any",
       "codestyle": "None",

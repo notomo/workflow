@@ -25,11 +25,11 @@ requireall: FORCE deps
 
 CHECK_RESULT_DIR:=/tmp/luals-check
 CHECK_RESULT:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}.json
+CHECK_VIMRUNTIME:=${HOME}/.local/nvim/share/nvim/runtime
 check: FORCE
 	mkdir -p ${CHECK_RESULT_DIR}
-	lua-language-server --check_out_path=${CHECK_RESULT} --configpath=${MAKEFILE_DIR_PATH}.luarc.json --check=lua
+	VIMRUNTIME=${CHECK_VIMRUNTIME} lua-language-server --check_out_path=${CHECK_RESULT} --configpath=${MAKEFILE_DIR_PATH}.luarc.json --check=lua
 	cat ${CHECK_RESULT}
-	if [ "$(shell cat ${CHECK_RESULT} | head -c 2)" = "[]" ]; then rm ${CHECK_RESULT}; fi
 
 # target to overwrite
 deps: assertlib.nvim requireall.nvim
