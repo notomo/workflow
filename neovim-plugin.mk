@@ -45,6 +45,7 @@ $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/requireall.nvim:
 nvim-treesitter: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/opt/nvim-treesitter
 $(MAKEFILE_DIR_PATH)/packages/pack/testpack/opt/nvim-treesitter:
 	git clone https://github.com/nvim-treesitter/nvim-treesitter.git --depth 1 $@;
+	npm install -g tree-sitter-cli
 
 FORCE:
 .PHONY: FORCE
