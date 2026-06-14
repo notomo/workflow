@@ -29,10 +29,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: notomo/action-setup-nvim-lua@0314b24446fbad4f9cf1c2129f10fe7cd869f431 # v2.0.2
-
-      - run: luarocks install vusted
-
       - uses: rhysd/action-setup-vim@febef33995d6649302e9d88dda81e071b68f16a7 # v1.6.1
         id: vim
         with:
@@ -40,5 +36,3 @@ jobs:
           version: nightly
 
       - run: make test
-        env:
-          VUSTED_NVIM: ${{ steps.vim.outputs.executable }}
