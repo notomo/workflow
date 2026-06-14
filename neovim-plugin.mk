@@ -4,9 +4,10 @@ FULL_PLUGIN_NAME ?= $(notdir $(abspath .))
 PLUGIN_NAME ?= $(basename $(notdir $(abspath .)))
 SPEC_DIR ?= ./spec/lua/${PLUGIN_NAME}
 
+NTF ?= $(MAKEFILE_DIR_PATH)packages/pack/testpack/start/ntf/bin/ntf
 test: FORCE deps
 	$(MAKE) requireall
-	vusted --shuffle ${SPEC_DIR}
+	$(NTF) --shuffle ${SPEC_DIR}
 
 doc: FORCE
 	rm -f ./doc/${FULL_PLUGIN_NAME}.txt ./README.md
@@ -32,7 +33,11 @@ check: FORCE
 	cat ${CHECK_RESULT}
 
 # target to overwrite
-deps: assertlib.nvim requireall.nvim
+deps: ntf assertlib.nvim requireall.nvim
+
+ntf: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/ntf
+$(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/ntf:
+	if [ "${DEPS_SKIP_NTF}" != "1" ]; then git clone https://github.com/notomo/ntf.git --depth 1 $@; fi
 
 assertlib.nvim: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/assertlib.nvim
 $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/assertlib.nvim:
