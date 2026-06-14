@@ -1,6 +1,15 @@
 vim.opt.packpath:prepend(vim.fs.joinpath(vim.fn.getcwd(), "spec/.shared/packages"))
 vim.opt.runtimepath:prepend(vim.fn.getcwd())
 
+local original_notify = vim.notify
+---@diagnostic disable-next-line: duplicate-set-field
+vim.notify = function(msg, level, opts)
+  if (level or vim.log.levels.INFO) < vim.log.levels.INFO then
+    return
+  end
+  return original_notify(msg, level, opts)
+end
+
 require("requireall").execute({
   module_filter = function(module_path)
     local ignore = vim
