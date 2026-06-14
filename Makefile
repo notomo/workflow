@@ -1,2 +1,2 @@
 test:
-	vusted --version
+	nvim --version
