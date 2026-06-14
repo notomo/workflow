@@ -25,12 +25,14 @@ requireall: FORCE deps
 	REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
 
 CHECK_RESULT_DIR:=/tmp/luals-check
-CHECK_RESULT:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}.json
+CHECK_RESULT_LUA:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}-lua.json
+CHECK_RESULT_SPEC:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}-spec.json
 CHECK_VIMRUNTIME:=${HOME}/.local/nvim/share/nvim/runtime
 check: FORCE
 	mkdir -p ${CHECK_RESULT_DIR}
-	VIMRUNTIME=${CHECK_VIMRUNTIME} lua-language-server --check_out_path=${CHECK_RESULT} --configpath=${MAKEFILE_DIR_PATH}.luarc.json --check=lua
-	cat ${CHECK_RESULT}
+	VIMRUNTIME=${CHECK_VIMRUNTIME} lua-language-server --check_out_path=${CHECK_RESULT_LUA} --configpath=${MAKEFILE_DIR_PATH}.luarc.json --checklevel=Hint --check=lua
+	VIMRUNTIME=${CHECK_VIMRUNTIME} lua-language-server --check_out_path=${CHECK_RESULT_SPEC} --configpath=${MAKEFILE_DIR_PATH}.luarc.json --checklevel=Hint --check=spec/lua
+	cat ${CHECK_RESULT_LUA} ${CHECK_RESULT_SPEC}
 
 # target to overwrite
 deps: ntf assertlib.nvim requireall.nvim
