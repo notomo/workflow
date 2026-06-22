@@ -27,7 +27,7 @@ requireall: FORCE deps
 CHECK_RESULT_DIR:=/tmp/luals-check
 CHECK_RESULT_LUA:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}-lua.json
 CHECK_RESULT_SPEC:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}-spec.json
-CHECK_VIMRUNTIME:=${HOME}/.local/nvim/share/nvim/runtime
+CHECK_VIMRUNTIME ?= $(shell nvim --headless -u NONE -i NONE -n +"lua io.write(vim.env.VIMRUNTIME or '')" +"quitall!" 2>/dev/null)
 check: FORCE
 	mkdir -p ${CHECK_RESULT_DIR}
 	VIMRUNTIME=${CHECK_VIMRUNTIME} lua-language-server --check_out_path=${CHECK_RESULT_LUA} --configpath=${MAKEFILE_DIR_PATH}.luarc.json --checklevel=Hint --check=lua
