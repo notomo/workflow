@@ -7,7 +7,7 @@ SPEC_DIR ?= ./spec/lua/${PLUGIN_NAME}
 NTF ?= $(MAKEFILE_DIR_PATH)packages/pack/testpack/start/ntf/bin/ntf
 test: FORCE deps
 	$(MAKE) requireall
-	$(NTF) --shuffle ${SPEC_DIR}
+	$(NTF) ${SPEC_DIR}
 
 # Measure line coverage of ${SPEC_DIR}'s code. The stats file is written into the
 # shared dir (gitignored here and, in a consuming repo, under the ignored
