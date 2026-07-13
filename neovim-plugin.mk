@@ -9,16 +9,19 @@ test: FORCE deps
 	$(MAKE) requireall
 	$(NTF) ${SPEC_DIR}
 
+EXCLUDE_CODE ?= $(wildcard lua/${PLUGIN_NAME}/vendor lua/${PLUGIN_NAME}/test)
+EXCLUDE_CODE_FLAGS = $(foreach path,${EXCLUDE_CODE},--exclude-code=${path})
+
 COVERAGE_STATS ?= ${MAKEFILE_DIR_PATH}luacov.stats.out
 coverage: FORCE deps
-	$(NTF) --coverage=${COVERAGE_STATS} ${SPEC_DIR}
+	$(NTF) --coverage=${COVERAGE_STATS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 MUTATION_RESULTS ?= ${MAKEFILE_DIR_PATH}ntf-mutation.json
 MUTATION_PATH ?=
 MUTATION_THRESHOLD ?=
 MUTATION_FLAGS = --mutation$(if ${MUTATION_PATH},=${MUTATION_PATH}) --mutation-results=${MUTATION_RESULTS} $(if ${MUTATION_THRESHOLD},--mutation-threshold=${MUTATION_THRESHOLD})
 mutation: FORCE deps
-	$(NTF) ${MUTATION_FLAGS} ${SPEC_DIR}
+	$(NTF) ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 doc: FORCE
 	rm -f ./doc/${FULL_PLUGIN_NAME}.txt ./README.md
