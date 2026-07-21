@@ -1,10 +1,18 @@
---- A rule entry in the REQUIRE_LINT_CONFIG json. Exactly one of `allow` / `forbid` is required.
+--- A rule entry in the REQUIRE_LINT_CONFIG json.
 --- All prefixes are module paths matched at dot boundaries.
---- @class RequireLintRule
+--- @class RequireLintRuleBase
 --- @field from string importer module prefix the rule applies to
---- @field allow string[]? within `from`'s top namespace, requiring a target matching none of these is forbidden
---- @field forbid string[]? requiring a target matching any of these is forbidden
 --- @field message string? why the rule exists, shown along with the violation
+
+--- @class RequireLintAllowRule : RequireLintRuleBase
+--- @field allow string[] within `from`'s top namespace, requiring a target matching none of these is forbidden
+--- @field forbid nil
+
+--- @class RequireLintForbidRule : RequireLintRuleBase
+--- @field allow nil
+--- @field forbid string[] requiring a target matching any of these is forbidden
+
+--- @alias RequireLintRule RequireLintAllowRule|RequireLintForbidRule
 
 --- @class RequireLintConfig
 --- @field rules RequireLintRule[]?
@@ -29,7 +37,7 @@ local function is_forbidden(target, rule)
   if not matches_prefix(target, top) then
     return false
   end
-  return not vim.iter(rule.allow or {}):any(function(prefix)
+  return not vim.iter(rule.allow):any(function(prefix)
     return matches_prefix(target, prefix)
   end)
 end
@@ -85,7 +93,7 @@ for _, path in ipairs(files) do
         for _, rule in ipairs(applicable) do
           if is_forbidden(target, rule) then
             local kind = rule.forbid and ("forbid " .. table.concat(rule.forbid, ","))
-              or ("allow " .. table.concat(rule.allow or {}, ","))
+              or ("allow " .. table.concat(rule.allow, ","))
             local reason = rule.message and (": " .. rule.message) or ""
             table.insert(
               violations,
