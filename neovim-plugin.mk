@@ -4,6 +4,11 @@ FULL_PLUGIN_NAME ?= $(notdir $(abspath .))
 PLUGIN_NAME ?= $(basename $(notdir $(abspath .)))
 SPEC_DIR ?= ./spec/lua/${PLUGIN_NAME}
 
+# entry point for CI. overwrite CI_TARGETS to run more than tests.
+CI_TARGETS ?= test
+ci: FORCE
+	$(MAKE) ${CI_TARGETS}
+
 NTF ?= $(MAKEFILE_DIR_PATH)packages/pack/testpack/start/ntf/bin/ntf
 test: FORCE deps
 	$(MAKE) requireall
