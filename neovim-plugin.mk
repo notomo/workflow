@@ -42,6 +42,10 @@ sync_config:
 requireall: FORCE deps
 	REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
 
+REQUIRE_LINT_CONFIG ?=
+require_lint: FORCE
+	REQUIRE_LINT_CONFIG="${REQUIRE_LINT_CONFIG}" nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/require_lint.lua"
+
 CHECK_RESULT_DIR:=/tmp/luals-check
 CHECK_RESULT_LUA:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}-lua.json
 CHECK_RESULT_SPEC:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}-spec.json
