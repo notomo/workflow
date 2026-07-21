@@ -74,11 +74,13 @@ if #rules == 0 then
   os.exit(0)
 end
 
-local lua_dir = vim.fs.joinpath(vim.fn.getcwd(), "lua")
+local cwd = vim.fn.getcwd()
+local lua_dir = vim.fs.joinpath(cwd, "lua")
 local files = vim.fn.glob(vim.fs.joinpath(lua_dir, "**", "*.lua"), false, true)
 
 local violations = {}
 for _, path in ipairs(files) do
+  local relative_path = path:sub(#cwd + 2)
   local module = to_module(path, lua_dir)
   local applicable = vim
     .iter(rules)
@@ -98,7 +100,7 @@ for _, path in ipairs(files) do
             table.insert(
               violations,
               ("%s:%d: %s requires %s (rule: from %s, %s)%s"):format(
-                path,
+                relative_path,
                 lineno,
                 module,
                 target,

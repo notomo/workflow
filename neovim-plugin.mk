@@ -32,9 +32,10 @@ mutation: FORCE deps
 mutation_list: FORCE deps
 	$(NTF) ${MUTATION_FLAGS} --list ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
+DOC_CONFIG ?= $(wildcard spec/doc_config.json)
 doc: FORCE
 	rm -f ./doc/${FULL_PLUGIN_NAME}.txt ./README.md
-	PLUGIN_NAME=${PLUGIN_NAME} nvim --headless -i NONE -n +"lua dofile('${SPEC_DIR}/doc.lua')" +"quitall!"
+	PLUGIN_NAME=${PLUGIN_NAME} DOC_CONFIG="${DOC_CONFIG}" nvim --headless -i NONE -n +"lua dofile('${SPEC_DIR}/doc.lua')" +"quitall!"
 	cat ./doc/${FULL_PLUGIN_NAME}.txt ./README.md
 
 vendor: FORCE
@@ -50,6 +51,9 @@ requireall: FORCE deps
 REQUIRE_LINT_CONFIG ?=
 require_lint: FORCE
 	REQUIRE_LINT_CONFIG="${REQUIRE_LINT_CONFIG}" nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/require_lint.lua"
+
+comment_lint: FORCE
+	DOC_CONFIG="${DOC_CONFIG}" nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/comment_lint.lua"
 
 CHECK_RESULT_DIR:=/tmp/luals-check
 CHECK_RESULT_LUA:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}-lua.json
