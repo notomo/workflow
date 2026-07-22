@@ -4,16 +4,7 @@
 --- @class DocConfig
 --- @field source DocConfigSource?
 
-local GUIDE = [[
-
-instructions:
-- delete the comment. it restates the code and drifts away from it. express what it says as a test, a type annotation or a better name instead, and keep a comment only if a reader would otherwise undo the decision.
-- a kept comment must be in English and in this form, where each entry may continue onto the following comment lines:
-    -- WHY: {reason}
-    -- NOT: {rejected alternative a reader would plausibly take instead}
-- `NOT:` is mandatory. never invent one: a comment with no alternative to reject is a restatement or an outside fact, so delete it and, if a value or a step still needs explaining, give it a named constant or a test.
-- type annotations are allowed. write descriptions on the annotation line itself, not as prose lines.
-]]
+local RULE_PATH = debug.getinfo(1, "S").source:sub(2):gsub("%.lua$", ".md")
 
 --- @param path string
 --- @return string[] doc source globs
@@ -232,7 +223,8 @@ for _, path in ipairs(collect_files()) do
 end
 
 if #violations > 0 then
-  io.stderr:write(table.concat(violations, "\n") .. "\n" .. GUIDE)
+  local rule = table.concat(vim.fn.readfile(RULE_PATH), "\n")
+  io.stderr:write(("%s\n\n%s\n"):format(table.concat(violations, "\n"), rule))
   os.exit(1)
 end
 os.exit(0)
