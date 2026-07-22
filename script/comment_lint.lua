@@ -8,9 +8,10 @@ local GUIDE = [[
 
 instructions:
 - delete the comment. it restates the code and drifts away from it. express what it says as a test, a type annotation or a better name instead, and keep a comment only if a reader would otherwise undo the decision.
-- a kept comment must be in English and in this form, where `NOT:` is optional and each entry may continue onto the following comment lines:
+- a kept comment must be in English and in this form, where each entry may continue onto the following comment lines:
     -- WHY: {reason}
-    -- NOT: {rejected alternative}
+    -- NOT: {rejected alternative a reader would plausibly take instead}
+- `NOT:` is mandatory. never invent one: a comment with no alternative to reject is a restatement or an outside fact, so delete it and, if a value or a step still needs explaining, give it a named constant or a test.
 - type annotations are allowed. write descriptions on the annotation line itself, not as prose lines.
 ]]
 
@@ -168,13 +169,12 @@ local function check_plain_block(block)
     return {}
   end
 
-  local violations = {}
   if not first.text:gsub("^%-%-+%s*", ""):match("^WHY:%s*%S") then
-    violations[#violations + 1] = {
-      row = first.row,
-      message = ("comment does not start with `WHY: {reason}`: %s"):format(first.text),
-    }
+    return { { row = first.row, message = ("comment does not start with `WHY: {reason}`: %s"):format(first.text) } }
   end
+
+  local violations = {}
+  local rejected = false
   for _, comment in ipairs(vim.list_slice(block, 2)) do
     local content = comment.text:gsub("^%-%-+%s*", "")
     if content:match("^WHY:") then
@@ -182,12 +182,20 @@ local function check_plain_block(block)
         row = comment.row,
         message = ("second `WHY:` in one comment block, split it into its own block: %s"):format(comment.text),
       }
-    elseif content:match("^NOT:") and not content:match("^NOT:%s*%S") then
+    elseif content:match("^NOT:%s*%S") then
+      rejected = true
+    elseif content:match("^NOT:") then
       violations[#violations + 1] = {
         row = comment.row,
         message = ("`NOT:` without a rejected alternative: %s"):format(comment.text),
       }
     end
+  end
+  if not rejected then
+    violations[#violations + 1] = {
+      row = first.row,
+      message = ("comment has no `NOT: {rejected alternative}` line, so delete it: %s"):format(first.text),
+    }
   end
   return violations
 end
