@@ -41,13 +41,23 @@ local function expand_patterns(patterns)
   return paths
 end
 
+--- @param relative string path relative to cwd
+--- @return boolean
+local function is_excluded(relative)
+  return relative:find("/vendor/", 1, true) ~= nil
+    or relative:match("^spec/lua/[^/]+/doc/") ~= nil
+    or relative:match("^spec/lua/[^/]+/example%.lua$") ~= nil
+end
+
 --- @return string[] paths relative to cwd
 local function collect_files()
   local files = {}
-  for _, path in ipairs(vim.fn.glob(vim.fs.joinpath(cwd, "lua", "**", "*.lua"), false, true)) do
-    local relative = to_relative(path)
-    if not relative:find("/vendor/", 1, true) then
-      table.insert(files, relative)
+  for _, dir in ipairs({ "lua", "spec/lua" }) do
+    for _, path in ipairs(vim.fn.glob(vim.fs.joinpath(cwd, dir, "**", "*.lua"), false, true)) do
+      local relative = to_relative(path)
+      if not is_excluded(relative) then
+        table.insert(files, relative)
+      end
     end
   end
   table.sort(files)
