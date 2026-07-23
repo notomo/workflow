@@ -1,5 +1,5 @@
 --- @class DocConfigSource
---- @field patterns string[]? globs relative to cwd whose lua doc feeds document generation, so `---` lines in them are not linted
+--- @field patterns string[]? globs relative to cwd whose lua doc feeds document generation, so a `---` description directly above a declaration in them is not linted
 
 --- @class DocConfig
 --- @field source DocConfigSource?
@@ -201,6 +201,16 @@ local function check_plain_block(block)
   return violations
 end
 
+--- genvdoc renders a `---` block's leading prose only when a declaration sits on
+--- the very next line, so that is the prose a doc source is exempted for.
+--- @param block CommentLintComment[]
+--- @param lines string[]
+--- @return boolean
+local function documents_declaration(block, lines)
+  local below = lines[block[#block].row + 1]
+  return below ~= nil and below:match("^%s*$") == nil and below:match("^%s*%-%-") == nil
+end
+
 --- @param path string relative to cwd
 --- @param doc_sources table<string,boolean> paths relative to cwd
 --- @return string[]
@@ -213,7 +223,7 @@ local function check_file(path, doc_sources)
     local checked
     if not block[1].luadoc then
       checked = check_plain_block(block)
-    elseif doc_sources[path] then
+    elseif doc_sources[path] and documents_declaration(block, lines) then
       checked = {}
     else
       checked = check_luadoc_block(block)
