@@ -24,9 +24,6 @@ require("requireall").execute({
     if module_path:find("%.test%.helper") then
       return false
     end
-    if module_path:find("vusted") then
-      return false
-    end
     return true
   end,
 })
