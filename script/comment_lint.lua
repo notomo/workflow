@@ -211,10 +211,21 @@ local function documents_declaration(block, lines)
   return below ~= nil and below:match("^%s*$") == nil and below:match("^%s*%-%-") == nil
 end
 
+--- @param block CommentLintComment[]
+--- @return string the block's prose, stripped of comment markers and line wrapping
+local function reason_of(block)
+  local parts = {}
+  for _, comment in ipairs(block) do
+    table.insert(parts, (comment.text:gsub("^%-%-+%s*", "")))
+  end
+  return (table.concat(parts, " "):gsub("%s+", " "))
+end
+
 --- @param path string relative to cwd
 --- @param doc_sources table<string,boolean> paths relative to cwd
+--- @param stated table<string,string> reason -> the `path:row` that already carries it
 --- @return string[]
-local function check_file(path, doc_sources)
+local function check_file(path, doc_sources, stated)
   local lines = vim.fn.readfile(path)
   local src = table.concat(lines, "\n")
 
@@ -223,6 +234,20 @@ local function check_file(path, doc_sources)
     local checked
     if not block[1].luadoc then
       checked = check_plain_block(block)
+      local reason = reason_of(block)
+      if #checked == 0 then
+        if stated[reason] then
+          table.insert(checked, {
+            row = block[1].row,
+            message = ("the same reason is already stated at %s, so keep it at whichever site a test does not guard and delete the other: %s"):format(
+              stated[reason],
+              block[1].text
+            ),
+          })
+        else
+          stated[reason] = ("%s:%d"):format(path, block[1].row)
+        end
+      end
     elseif doc_sources[path] and documents_declaration(block, lines) then
       checked = {}
     else
@@ -238,8 +263,9 @@ end
 local doc_sources = expand_patterns(load_doc_source_patterns(vim.env.DOC_CONFIG))
 
 local violations = {}
+local stated = {}
 for _, path in ipairs(collect_files()) do
-  vim.list_extend(violations, check_file(path, doc_sources))
+  vim.list_extend(violations, check_file(path, doc_sources, stated))
 end
 
 if #violations > 0 then
