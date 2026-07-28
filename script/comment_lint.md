@@ -3,7 +3,9 @@
 `make comment_lint` enforces this over `lua/` and `spec/lua/`.
 
 - delete the comment. it restates the code and drifts away from it. express what it says as a test, a type annotation or a better name instead.
-- before keeping one, revert the decision it defends and run the tests. a test that catches the reversal is already what stops a reader from undoing it, so name that test well and delete the comment. keep it only when the reversal survives the suite, or when the reason is an outside fact the failure cannot state on its own — what an API rejects, what a runtime forbids, what a measurement showed.
+- before keeping one, revert the decision it defends and run the tests. a test that catches the reversal is already what stops a reader from undoing it, so name that test well and delete the comment. keep it only when the reversal survives the suite, or when the reason is an outside fact the failure cannot state on its own — what an API rejects, what a runtime forbids.
+- surviving that revert is not enough on its own. delete the comment when a reader meets its reason on the way to it — the sort two lines down, the phase this call sits in, the branch it guards. keep the reason that lives where the reader is not looking: in the runtime, in another process, in a module this file never names.
+- keep it only when the rejected alternative is broken, not merely worse. slower, less deterministic, quieter is worse — a reader who takes it still has a working program and can measure the difference themselves. keep when taking it silently yields a wrong result: a result that reads as correct, state that leaks between runs, a dependency that loads the wrong copy, a behaviour that differs under the tool from what it is on its own. a performance argument never clears it, with or without numbers. a measurement dates the moment the code or the suite moves, while the comment goes on asserting it, so it belongs in the commit message that carries its date.
 - a kept comment must be in English and in this form, where each entry may continue onto the following comment lines:
 
       -- WHY: {reason}
