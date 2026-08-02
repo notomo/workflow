@@ -81,15 +81,15 @@ deps: ntf assertlib.nvim requireall.nvim
 
 ntf: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/ntf
 $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/ntf:
-	if [ "${DEPS_SKIP_NTF}" != "1" ]; then git clone https://github.com/notomo/ntf.git --depth 1 $@; fi
+	@if [ "${DEPS_SKIP_NTF}" != "1" ]; then git clone https://github.com/notomo/ntf.git --depth 1 $@; fi
 
 assertlib.nvim: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/assertlib.nvim
 $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/assertlib.nvim:
-	if [ "${DEPS_SKIP_ASSERTLIB}" != "1" ]; then git clone https://github.com/notomo/assertlib.nvim.git --depth 1 $@; fi
+	@if [ "${DEPS_SKIP_ASSERTLIB}" != "1" ]; then git clone https://github.com/notomo/assertlib.nvim.git --depth 1 $@; fi
 
 requireall.nvim: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/requireall.nvim
 $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/requireall.nvim:
-	if [ "${DEPS_SKIP_REQUIREALL}" != "1" ]; then git clone https://github.com/notomo/requireall.nvim.git --depth 1 $@; fi
+	@if [ "${DEPS_SKIP_REQUIREALL}" != "1" ]; then git clone https://github.com/notomo/requireall.nvim.git --depth 1 $@; fi
 
 nvim-treesitter: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/opt/nvim-treesitter
 $(MAKEFILE_DIR_PATH)/packages/pack/testpack/opt/nvim-treesitter:
