@@ -25,12 +25,23 @@ coverage: FORCE deps
 	$(NTF) --coverage=${COVERAGE_STATS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 MUTATION_RESULTS ?= ${MAKEFILE_DIR_PATH}ntf-mutation.json
-MUTATION_FLAGS =
+MUTATION_CONFIG ?= $(wildcard spec/mutation.json)
+MUTATION_CONFIG_FLAGS = $(foreach path,${MUTATION_CONFIG},--config=${path})
+MUTATION_FLAGS = ${MUTATION_CONFIG_FLAGS}
+
+mutation: MUTATION_FLAGS += --strict
 mutation: FORCE deps
 	$(NTF) mutation --results=${MUTATION_RESULTS} ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 mutation_list: FORCE deps
 	$(NTF) mutation list ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
+
+mutation_verify_baseline: FORCE deps
+	$(NTF) mutation verify-baseline ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
+
+mutation_ci: MUTATION_FLAGS += --strict --verify-baseline
+mutation_ci: FORCE deps
+	$(NTF) mutation --results=${MUTATION_RESULTS} ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 DOC_CONFIG ?= $(wildcard spec/doc_config.json)
 doc: FORCE
@@ -48,7 +59,7 @@ sync_config:
 requireall: FORCE deps
 	REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
 
-REQUIRE_LINT_CONFIG ?=
+REQUIRE_LINT_CONFIG ?= $(wildcard spec/require_lint.json)
 require_lint: FORCE
 	REQUIRE_LINT_CONFIG="${REQUIRE_LINT_CONFIG}" nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/require_lint.lua"
 
