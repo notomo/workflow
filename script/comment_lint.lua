@@ -159,10 +159,26 @@ local function check_luadoc_block(block)
   return violations
 end
 
+--- lua-language-server spells an inline cast as `--[[@as T]]`, the block form of an annotation.
+--- @param text string
+--- @return boolean
+local function is_annotation(text)
+  return text:match("^%-%-%[=*%[%s*@") ~= nil
+end
+
+--- @param text string
+--- @return boolean
+local function is_reason(text)
+  return text:gsub("^%-%-+%s*", ""):match("^WHY:") ~= nil
+end
+
 --- @param block CommentLintComment[]
 --- @return {row:integer,message:string}[]
 local function check_plain_block(block)
   local first = block[1]
+  if #block == 1 and is_annotation(first.text) then
+    return {}
+  end
   if first.multiline then
     return { { row = first.row, message = ("block comment: %s"):format(vim.split(first.text, "\n")[1]) } }
   end
@@ -235,7 +251,7 @@ local function check_file(path, doc_sources, stated)
     if not block[1].luadoc then
       checked = check_plain_block(block)
       local reason = reason_of(block)
-      if #checked == 0 then
+      if #checked == 0 and is_reason(block[1].text) then
         if stated[reason] then
           table.insert(checked, {
             row = block[1].row,
