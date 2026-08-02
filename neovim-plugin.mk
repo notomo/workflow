@@ -10,24 +10,28 @@ ci: FORCE
 	$(MAKE) ${CI_TARGETS}
 
 NTF ?= $(MAKEFILE_DIR_PATH)packages/pack/testpack/start/ntf/bin/ntf
+
+NTF_GLOBAL_HOOK ?= ${MAKEFILE_DIR_PATH}script/ntf_global_hook.lua
+NTF_GLOBAL_HOOK_FLAGS = --global-hook=${NTF_GLOBAL_HOOK}
+
 test: FORCE deps
 	$(MAKE) requireall
-	$(NTF) ${SPEC_DIR}
+	$(NTF) ${NTF_GLOBAL_HOOK_FLAGS} ${SPEC_DIR}
 
 test_list: FORCE deps
-	$(NTF) list ${SPEC_DIR}
+	$(NTF) list ${NTF_GLOBAL_HOOK_FLAGS} ${SPEC_DIR}
 
 EXCLUDE_CODE ?= $(wildcard lua/${PLUGIN_NAME}/vendor lua/${PLUGIN_NAME}/test)
 EXCLUDE_CODE_FLAGS = $(foreach path,${EXCLUDE_CODE},--exclude-code=${path})
 
 COVERAGE_STATS ?= ${MAKEFILE_DIR_PATH}luacov.stats.out
 coverage: FORCE deps
-	$(NTF) --coverage=${COVERAGE_STATS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
+	$(NTF) --coverage=${COVERAGE_STATS} ${EXCLUDE_CODE_FLAGS} ${NTF_GLOBAL_HOOK_FLAGS} ${SPEC_DIR}
 
 MUTATION_RESULTS ?= ${MAKEFILE_DIR_PATH}ntf-mutation.json
 MUTATION_CONFIG ?= $(wildcard spec/mutation.json)
 MUTATION_CONFIG_FLAGS = $(foreach path,${MUTATION_CONFIG},--config=${path})
-MUTATION_FLAGS = ${MUTATION_CONFIG_FLAGS}
+MUTATION_FLAGS = ${MUTATION_CONFIG_FLAGS} ${NTF_GLOBAL_HOOK_FLAGS}
 
 mutation: MUTATION_FLAGS += --strict
 mutation: FORCE deps
