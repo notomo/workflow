@@ -15,7 +15,7 @@ test: FORCE deps
 	$(NTF) ${SPEC_DIR}
 
 test_list: FORCE deps
-	$(NTF) --list ${SPEC_DIR}
+	$(NTF) list ${SPEC_DIR}
 
 EXCLUDE_CODE ?= $(wildcard lua/${PLUGIN_NAME}/vendor lua/${PLUGIN_NAME}/test)
 EXCLUDE_CODE_FLAGS = $(foreach path,${EXCLUDE_CODE},--exclude-code=${path})
@@ -25,12 +25,12 @@ coverage: FORCE deps
 	$(NTF) --coverage=${COVERAGE_STATS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 MUTATION_RESULTS ?= ${MAKEFILE_DIR_PATH}ntf-mutation.json
-MUTATION_FLAGS = --mutation --mutation-results=${MUTATION_RESULTS}
+MUTATION_FLAGS =
 mutation: FORCE deps
-	$(NTF) ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
+	$(NTF) mutation --results=${MUTATION_RESULTS} ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 mutation_list: FORCE deps
-	$(NTF) ${MUTATION_FLAGS} --list ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
+	$(NTF) mutation list ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 DOC_CONFIG ?= $(wildcard spec/doc_config.json)
 doc: FORCE
