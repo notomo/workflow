@@ -60,6 +60,10 @@ MAKEFILE_DIR_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 sync_config:
 	cp ${MAKEFILE_DIR_PATH}/stylua.toml ${MAKEFILE_DIR_PATH}/../../stylua.toml
 
+git_hooks: FORCE
+	cp ${MAKEFILE_DIR_PATH}script/git-hooks/commit-msg "$$(git rev-parse --git-path hooks)/commit-msg"
+	chmod +x "$$(git rev-parse --git-path hooks)/commit-msg"
+
 requireall: FORCE deps
 	REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
 

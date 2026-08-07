@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+MAX_SUBJECT=72
+
+subject=$(sed -n 1p "$1")
+
+case "${subject}" in
+'' | '#'* | 'fixup!'* | 'squash!'* | 'amend!'* | 'Merge '* | 'Revert '*) exit 0 ;;
+esac
+
+length=$(printf '%s' "${subject}" | wc -m | tr -d ' \t')
+
+if [ "${length}" -gt "${MAX_SUBJECT}" ]; then
+    cat >&2 <<EOF
+commit-msg: the subject is ${length} characters, over the ${MAX_SUBJECT} limit.
+
+  ${subject}
+
+Say what changed in the subject and put the reasoning in a body paragraph:
+git commit -m "\${subject}" -m "\${body}" -m "\${trailer}"
+EOF
+    exit 1
+fi
+
+second=$(sed -n 2p "$1")
+if [ -n "${second}" ]; then
+    echo "commit-msg: line 2 must be blank, separating the subject from the body." >&2
+    exit 1
+fi
+
+exit 0
