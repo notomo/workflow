@@ -65,14 +65,14 @@ git_hooks: FORCE
 	chmod +x "$$(git rev-parse --git-path hooks)/commit-msg"
 
 requireall: FORCE deps
-	REQUIREALL_PACKPATH=${MAKEFILE_DIR_PATH}packages REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
+	REQUIREALL_PACKPATH=${MAKEFILE_DIR_PATH}packages REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --clean -l ${MAKEFILE_DIR_PATH}script/requireall.lua
 
 REQUIRE_LINT_CONFIG ?= $(wildcard spec/require_lint.json)
 require_lint: FORCE
-	REQUIRE_LINT_CONFIG="${REQUIRE_LINT_CONFIG}" nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/require_lint.lua"
+	REQUIRE_LINT_CONFIG="${REQUIRE_LINT_CONFIG}" nvim --clean -l ${MAKEFILE_DIR_PATH}script/require_lint.lua
 
 comment_lint: FORCE
-	DOC_CONFIG="${DOC_CONFIG}" nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/comment_lint.lua"
+	DOC_CONFIG="${DOC_CONFIG}" nvim --clean -l ${MAKEFILE_DIR_PATH}script/comment_lint.lua
 
 CHECK_RESULT_DIR:=/tmp/luals-check
 CHECK_RESULT_LUA:=${CHECK_RESULT_DIR}/${PLUGIN_NAME}-lua.json
