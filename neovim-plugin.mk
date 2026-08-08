@@ -65,7 +65,7 @@ git_hooks: FORCE
 	chmod +x "$$(git rev-parse --git-path hooks)/commit-msg"
 
 requireall: FORCE deps
-	REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
+	REQUIREALL_PACKPATH=${MAKEFILE_DIR_PATH}packages REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --headless --clean +"luafile ${MAKEFILE_DIR_PATH}script/requireall.lua"
 
 REQUIRE_LINT_CONFIG ?= $(wildcard spec/require_lint.json)
 require_lint: FORCE

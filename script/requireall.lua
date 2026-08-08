@@ -1,4 +1,4 @@
-vim.opt.packpath:prepend(vim.fs.joinpath(vim.fn.getcwd(), "spec/.shared/packages"))
+vim.opt.packpath:prepend(vim.env.REQUIREALL_PACKPATH)
 vim.opt.runtimepath:prepend(vim.fn.getcwd())
 
 local original_notify = vim.notify
