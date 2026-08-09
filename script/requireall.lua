@@ -1,4 +1,4 @@
-vim.opt.packpath:prepend(vim.env.REQUIREALL_PACKPATH)
+vim.opt.packpath:prepend(vim.env.TESTPACK_PACKPATH)
 vim.opt.runtimepath:prepend(vim.fn.getcwd())
 
 local original_notify = vim.notify

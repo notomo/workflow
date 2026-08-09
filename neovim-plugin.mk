@@ -9,7 +9,7 @@ CI_TARGETS ?= test
 ci: FORCE
 	$(MAKE) ${CI_TARGETS}
 
-NTF ?= $(MAKEFILE_DIR_PATH)packages/pack/testpack/start/ntf/bin/ntf
+NTF ?= $(TESTPACK_PACKPATH)/pack/testpack/start/ntf/bin/ntf
 
 NTF_GLOBAL_HOOK ?= ${MAKEFILE_DIR_PATH}script/ntf_global_hook.lua
 NTF_GLOBAL_HOOK_FLAGS = --global-hook=${NTF_GLOBAL_HOOK}
@@ -57,6 +57,9 @@ vendor: FORCE
 	nvim --headless -i NONE -n +"lua require('vendorlib').install('${PLUGIN_NAME}', '${SPEC_DIR}/vendorlib.lua')" +"quitall!"
 
 MAKEFILE_DIR_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+
+export TESTPACK_PACKPATH ?= ${MAKEFILE_DIR_PATH}packages
+
 sync_config:
 	cp ${MAKEFILE_DIR_PATH}/stylua.toml ${MAKEFILE_DIR_PATH}/../../stylua.toml
 
@@ -65,7 +68,7 @@ git_hooks: FORCE
 	chmod +x "$$(git rev-parse --git-path hooks)/commit-msg"
 
 requireall: FORCE deps
-	REQUIREALL_PACKPATH=${MAKEFILE_DIR_PATH}packages REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --clean -l ${MAKEFILE_DIR_PATH}script/requireall.lua
+	REQUIREALL_IGNORE_MODULES=${REQUIREALL_IGNORE_MODULES} nvim --clean -l ${MAKEFILE_DIR_PATH}script/requireall.lua
 
 REQUIRE_LINT_CONFIG ?= $(wildcard spec/require_lint.json)
 require_lint: FORCE
@@ -87,20 +90,20 @@ check: FORCE
 # target to overwrite
 deps: ntf assertlib.nvim requireall.nvim
 
-ntf: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/ntf
-$(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/ntf:
+ntf: $(TESTPACK_PACKPATH)/pack/testpack/start/ntf
+$(TESTPACK_PACKPATH)/pack/testpack/start/ntf:
 	@if [ "${DEPS_SKIP_NTF}" != "1" ]; then git clone https://github.com/notomo/ntf.git --depth 1 $@; fi
 
-assertlib.nvim: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/assertlib.nvim
-$(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/assertlib.nvim:
+assertlib.nvim: $(TESTPACK_PACKPATH)/pack/testpack/start/assertlib.nvim
+$(TESTPACK_PACKPATH)/pack/testpack/start/assertlib.nvim:
 	@if [ "${DEPS_SKIP_ASSERTLIB}" != "1" ]; then git clone https://github.com/notomo/assertlib.nvim.git --depth 1 $@; fi
 
-requireall.nvim: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/requireall.nvim
-$(MAKEFILE_DIR_PATH)/packages/pack/testpack/start/requireall.nvim:
+requireall.nvim: $(TESTPACK_PACKPATH)/pack/testpack/start/requireall.nvim
+$(TESTPACK_PACKPATH)/pack/testpack/start/requireall.nvim:
 	@if [ "${DEPS_SKIP_REQUIREALL}" != "1" ]; then git clone https://github.com/notomo/requireall.nvim.git --depth 1 $@; fi
 
-nvim-treesitter: $(MAKEFILE_DIR_PATH)/packages/pack/testpack/opt/nvim-treesitter
-$(MAKEFILE_DIR_PATH)/packages/pack/testpack/opt/nvim-treesitter:
+nvim-treesitter: $(TESTPACK_PACKPATH)/pack/testpack/opt/nvim-treesitter
+$(TESTPACK_PACKPATH)/pack/testpack/opt/nvim-treesitter:
 	git clone https://github.com/notomo/nvim-treesitter.git --depth 1 $@;
 	npm install -g tree-sitter-cli@0.26.9
 
