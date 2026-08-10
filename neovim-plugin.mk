@@ -41,7 +41,7 @@ mutation_list: FORCE deps
 	$(NTF) mutation list ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 mutation_verify_baseline: FORCE deps
-	$(NTF) mutation verify-baseline ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
+	$(NTF) mutation baseline verify ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 mutation_ci: MUTATION_FLAGS += --strict --verify-baseline
 mutation_ci: FORCE deps
