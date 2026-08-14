@@ -48,10 +48,25 @@ mutation_ci: FORCE deps
 	$(NTF) mutation --results=${MUTATION_RESULTS} ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 DOC_CONFIG ?= $(wildcard spec/doc_config.json)
-doc: FORCE
+DOC_SOURCE ?= $(wildcard ${SPEC_DIR}/doc.lua)
+DOC_PATHS ?= ./doc ./README.md
+doc: FORCE genvdoc
 	rm -f ./doc/${FULL_PLUGIN_NAME}.txt ./README.md
-	PLUGIN_NAME=${PLUGIN_NAME} DOC_CONFIG="${DOC_CONFIG}" nvim --headless -i NONE -n +"lua dofile('${SPEC_DIR}/doc.lua')" +"quitall!"
+	PLUGIN_NAME=${PLUGIN_NAME} DOC_CONFIG="${DOC_CONFIG}" DOC_SOURCE="${DOC_SOURCE}" nvim --clean -l ${MAKEFILE_DIR_PATH}script/doc.lua
 	cat ./doc/${FULL_PLUGIN_NAME}.txt ./README.md
+
+doc_ci: FORCE
+ifeq (${DOC_SOURCE},)
+	@echo "skipped: no ${SPEC_DIR}/doc.lua"
+else
+	$(MAKE) doc
+	@if [ -n "$$(git status --porcelain -- ${DOC_PATHS})" ]; then \
+	  git status --porcelain -- ${DOC_PATHS}; \
+	  git --no-pager diff -- ${DOC_PATHS}; \
+	  echo "the generated doc is outdated: run 'make doc' and commit the result"; \
+	  exit 1; \
+	fi
+endif
 
 vendor: FORCE
 	nvim --headless -i NONE -n +"lua require('vendorlib').install('${PLUGIN_NAME}', '${SPEC_DIR}/vendorlib.lua')" +"quitall!"
@@ -101,6 +116,10 @@ $(TESTPACK_PACKPATH)/pack/testpack/start/assertlib.nvim:
 requireall.nvim: $(TESTPACK_PACKPATH)/pack/testpack/start/requireall.nvim
 $(TESTPACK_PACKPATH)/pack/testpack/start/requireall.nvim:
 	@if [ "${DEPS_SKIP_REQUIREALL}" != "1" ]; then git clone https://github.com/notomo/requireall.nvim.git --depth 1 $@; fi
+
+genvdoc: $(TESTPACK_PACKPATH)/pack/testpack/start/genvdoc
+$(TESTPACK_PACKPATH)/pack/testpack/start/genvdoc:
+	@if [ "${DEPS_SKIP_GENVDOC}" != "1" ]; then git clone https://github.com/notomo/genvdoc.git --depth 1 $@; fi
 
 nvim-treesitter: $(TESTPACK_PACKPATH)/pack/testpack/opt/nvim-treesitter
 $(TESTPACK_PACKPATH)/pack/testpack/opt/nvim-treesitter:

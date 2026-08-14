@@ -8,7 +8,7 @@ git_hooks:
 	chmod +x "$$(git rev-parse --git-path hooks)/commit-msg"
 
 PLUGINS_DIR ?= $(abspath $(CURDIR)/..)
-LOCAL_DEPS ?= ntf assertlib.nvim requireall.nvim
+LOCAL_DEPS ?= ntf assertlib.nvim requireall.nvim genvdoc
 DEPS_START_DIRS ?= $(wildcard $(PLUGINS_DIR)/*/spec/.shared/packages/pack/testpack/start) $(wildcard $(CURDIR)/packages/pack/testpack/start)
 
 link_deps:
