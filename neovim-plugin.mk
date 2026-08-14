@@ -50,16 +50,18 @@ mutation_ci: FORCE deps
 DOC_CONFIG ?= $(wildcard spec/doc_config.json)
 DOC_SOURCE ?= $(wildcard ${SPEC_DIR}/doc.lua)
 DOC_PATHS ?= ./doc ./README.md
-doc: FORCE genvdoc
+doc: FORCE doc_generate
+	cat ./doc/${FULL_PLUGIN_NAME}.txt ./README.md
+
+doc_generate: FORCE genvdoc
 	rm -f ./doc/${FULL_PLUGIN_NAME}.txt ./README.md
 	PLUGIN_NAME=${PLUGIN_NAME} DOC_CONFIG="${DOC_CONFIG}" DOC_SOURCE="${DOC_SOURCE}" nvim --clean -l ${MAKEFILE_DIR_PATH}script/doc.lua
-	cat ./doc/${FULL_PLUGIN_NAME}.txt ./README.md
 
 doc_ci: FORCE
 ifeq (${DOC_SOURCE},)
 	@echo "skipped: no ${SPEC_DIR}/doc.lua"
 else
-	$(MAKE) doc
+	$(MAKE) doc_generate
 	@if [ -n "$$(git status --porcelain -- ${DOC_PATHS})" ]; then \
 	  git status --porcelain -- ${DOC_PATHS}; \
 	  git --no-pager diff -- ${DOC_PATHS}; \
