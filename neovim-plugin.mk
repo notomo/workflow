@@ -4,7 +4,6 @@ FULL_PLUGIN_NAME ?= $(notdir $(abspath .))
 PLUGIN_NAME ?= $(basename $(notdir $(abspath .)))
 SPEC_DIR ?= ./spec/lua/${PLUGIN_NAME}
 
-# entry point for CI. overwrite CI_TARGETS to run more than tests.
 CI_TARGETS ?= test
 ci: FORCE
 	$(MAKE) ${CI_TARGETS}
@@ -24,18 +23,20 @@ test_list: FORCE deps
 EXCLUDE_CODE ?= $(wildcard lua/${PLUGIN_NAME}/vendor lua/${PLUGIN_NAME}/test)
 EXCLUDE_CODE_FLAGS = $(foreach path,${EXCLUDE_CODE},--exclude-code=${path})
 
-COVERAGE_STATS ?= ${MAKEFILE_DIR_PATH}luacov.stats.out
+COVERAGE_STATS ?=
+COVERAGE_FLAGS = $(if ${COVERAGE_STATS},--coverage=${COVERAGE_STATS},--coverage)
 coverage: FORCE deps
-	$(NTF) --coverage=${COVERAGE_STATS} ${EXCLUDE_CODE_FLAGS} ${NTF_GLOBAL_HOOK_FLAGS} ${SPEC_DIR}
+	$(NTF) ${COVERAGE_FLAGS} ${EXCLUDE_CODE_FLAGS} ${NTF_GLOBAL_HOOK_FLAGS} ${SPEC_DIR}
 
-MUTATION_RESULTS ?= ${MAKEFILE_DIR_PATH}ntf-mutation.json
+MUTATION_RESULTS ?=
+MUTATION_RESULTS_FLAGS = $(if ${MUTATION_RESULTS},--results=${MUTATION_RESULTS})
 MUTATION_CONFIG ?= $(wildcard spec/mutation.json)
 MUTATION_CONFIG_FLAGS = $(foreach path,${MUTATION_CONFIG},--config=${path})
 MUTATION_FLAGS = ${MUTATION_CONFIG_FLAGS} ${NTF_GLOBAL_HOOK_FLAGS}
 
 mutation: MUTATION_FLAGS += --strict
 mutation: FORCE deps
-	$(NTF) mutation --results=${MUTATION_RESULTS} ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
+	$(NTF) mutation ${MUTATION_RESULTS_FLAGS} ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 mutation_list: FORCE deps
 	$(NTF) mutation list ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
@@ -45,7 +46,7 @@ mutation_verify_baseline: FORCE deps
 
 mutation_ci: MUTATION_FLAGS += --strict --verify-baseline
 mutation_ci: FORCE deps
-	$(NTF) mutation --results=${MUTATION_RESULTS} ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
+	$(NTF) mutation ${MUTATION_RESULTS_FLAGS} ${MUTATION_FLAGS} ${EXCLUDE_CODE_FLAGS} ${SPEC_DIR}
 
 DOC_CONFIG ?= $(wildcard spec/doc_config.json)
 DOC_SOURCE ?= $(wildcard ${SPEC_DIR}/doc.lua)
