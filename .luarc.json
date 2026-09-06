@@ -5,7 +5,7 @@
   },
   "workspace": {
     "library": [
-      "lua",
+      "${env:CHECK_SPEC_LIBRARY}",
       "$VIMRUNTIME",
       "${3rd}/busted/library",
       "${3rd}/luassert/library",
