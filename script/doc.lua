@@ -45,10 +45,10 @@ end
 -- which would answer for a tag these documents no longer define.
 --- @return table<string, true> every tag the runtime help defines
 local function collect_runtime_tags()
-  local cwd = vim.fn.getcwd()
+  local cwd = vim.fs.normalize(vim.fn.getcwd())
   local tags = {}
   for _, path in ipairs(vim.api.nvim_get_runtime_file("doc/tags", true)) do
-    if not vim.startswith(vim.fs.abspath(path), cwd) then
+    if not vim.startswith(vim.fs.normalize(vim.fs.abspath(path)), cwd) then
       for _, line in ipairs(vim.fn.readfile(path)) do
         tags[vim.split(line, "\t")[1]] = true
       end

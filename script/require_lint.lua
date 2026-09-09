@@ -74,14 +74,15 @@ if #rules == 0 then
   os.exit(0)
 end
 
-local cwd = vim.fn.getcwd()
+local cwd = vim.fs.normalize(vim.fn.getcwd())
 local lua_dir = vim.fs.joinpath(cwd, "lua")
 local files = vim.fn.glob(vim.fs.joinpath(lua_dir, "**", "*.lua"), false, true)
 
 local violations = {}
 for _, path in ipairs(files) do
-  local relative_path = path:sub(#cwd + 2)
-  local module = to_module(path, lua_dir)
+  local normalized = vim.fs.normalize(path)
+  local relative_path = normalized:sub(#cwd + 2)
+  local module = to_module(normalized, lua_dir)
   local applicable = vim
     .iter(rules)
     :filter(function(rule)

@@ -21,12 +21,12 @@ local function load_doc_source_patterns(path)
   return patterns
 end
 
-local cwd = vim.fn.getcwd()
+local cwd = vim.fs.normalize(vim.fn.getcwd())
 
 --- @param path string absolute path
---- @return string path relative to cwd
+--- @return string path relative to cwd, its separators `/` as every pattern here spells them
 local function to_relative(path)
-  return path:sub(#cwd + 2)
+  return vim.fs.normalize(path):sub(#cwd + 2)
 end
 
 --- @param patterns string[]
